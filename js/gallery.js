@@ -66,23 +66,33 @@ const images = [
 
 const ul = document.querySelector(".gallery");
 
-images.forEach((image) => {
-  const li = document.createElement("li");
-  const img = document.createElement("img");
-  img.src = image.preview;
-  img.alt = image.description;
+let newString = "";
 
-  li.classList.add("gallery-item");
-  img.classList.add("gallery-img");
+for (const elem of images)
+  newString += `
+    <li class="gallery-item">
+      <a class="gallery-link" href="large-image.jpg">
+        <img
+          class="gallery-img"
+          src="${elem.preview}"
+          data-source="${elem.original}"
+          alt="${elem.description}"
+        />
+      </a>
+    </li>
+  `;
 
-  img.addEventListener("click", () => {
-    const instance = basicLightbox.create(`
-        <img src="${image.original}" alt="${image.description}">
-     `);
+ul.innerHTML = newString;
 
-    instance.show();
-  });
+ul.addEventListener("click", (e) => {
+  e.preventDefault();
 
-  li.appendChild(img);
-  ul.appendChild(li);
+  if (e.target.nodeName !== "IMG") return;
+
+  const instance = basicLightbox.create(`
+    <img src="${e.target.getAttribute(
+      "data-source"
+    )}" alt="${e.target.getAttribute("alt")}">
+  `);
+  instance.show();
 });
